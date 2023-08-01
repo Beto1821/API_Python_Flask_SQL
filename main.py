@@ -1,5 +1,13 @@
+import mysql.connector
 from flask import Flask, jsonify, make_response, request
-from bd import Carros
+# from bd import Carros
+
+mydb = mysql.connector.connect(
+    host='localhost',
+    user='user',
+    password='123456',
+    database='DbCarros'
+)
 
 app = Flask(__name__)
 app.config["JSON_SORT_KEYS"] = False
@@ -7,7 +15,23 @@ app.config["JSON_SORT_KEYS"] = False
 
 @app.route("/carros", methods=["GET"])
 def get_carros():
-    return Carros
+
+    my_cursor = mydb.cursor()
+    my_cursor.execute('SELECT * FROM Carros')
+    meus_carros = my_cursor.fetchall()
+
+    carros = list()
+    for carro in meus_carros:
+        carros.append(
+            {
+                'id': carro[0],
+                'marca': carro[1],
+                'modelo': carro[2],
+                'ano': carro[3]
+            }
+        )
+
+    return carros
 
 
 @app.route("/carros", methods=["POST"])

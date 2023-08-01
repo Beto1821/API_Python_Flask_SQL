@@ -6,6 +6,7 @@ python3 -m venv .venv && source .venv/bin/activate
 
 # PIP
 flask
+mysql-connector-python
 
 ### Testando no Postman
 
@@ -19,3 +20,9 @@ Here's how you can do it in Postman:
 - Go to the "Body" tab.
 - Select the "raw" option.
 - Enter the JSON data in the request body:
+
+
+# Docker
+docker build -t dbcarros-db .
+
+docker run --name dbCarros -d -p 3306:3306 -e MYSQL_ROOT_PASSWORD=root -e MYSQL_DATABASE=DbCarros -e MYSQL_USER=user -e MYSQL_PASSWORD=123456 dbcarros-db 
