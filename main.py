@@ -1,12 +1,10 @@
 import mysql.connector
 from flask import Flask, jsonify, make_response, request
+
 # from bd import Carros
 
 mydb = mysql.connector.connect(
-    host='localhost',
-    user='user',
-    password='123456',
-    database='DbCarros'
+    host="localhost", user="user", password="123456", database="DbCarros"
 )
 
 app = Flask(__name__)
@@ -15,19 +13,18 @@ app.config["JSON_SORT_KEYS"] = False
 
 @app.route("/carros", methods=["GET"])
 def get_carros():
-
     my_cursor = mydb.cursor()
-    my_cursor.execute('SELECT * FROM Carros')
+    my_cursor.execute("SELECT * FROM Carros")
     meus_carros = my_cursor.fetchall()
 
     carros = list()
     for carro in meus_carros:
         carros.append(
             {
-                'id': carro[0],
-                'marca': carro[1],
-                'modelo': carro[2],
-                'ano': carro[3]
+                "id": carro[0],
+                "marca": carro[1],
+                "modelo": carro[2],
+                "ano": carro[3]
             }
         )
 
@@ -45,8 +42,9 @@ def create_carro():
     mydb.commit()
 
     return make_response(
-        jsonify(mensagem="Carro cadastrado com sucesso!!!",
-                carro=carro,
+        jsonify(
+            mensagem="Carro cadastrado com sucesso!!!",
+            carro=carro,
         )
     )
 
@@ -65,27 +63,28 @@ def delete_carro(id):
         return make_response(jsonify(mensagem="Carro não encontrado!"), 404)
 
 
-
 @app.route("/carros/<int:id>", methods=["PATCH"])
 def update_carro(id):
-    carro_to_update = None
-    for carro in Carros:
-        if carro['id'] == id:
-            carro_to_update = carro
-            break
+    my_cursor = mydb.cursor()
+    data = request.json
 
-    if carro_to_update:
-        data = request.json
-        for key, value in data.items():
-            carro_to_update[key] = value
+    update_fields = ", ".join(
+        [f"{key} = '{value}'" for key, value in data.items()]
+        )
+    sql = f"UPDATE Carros SET {update_fields} WHERE id = {id}"
+
+    my_cursor.execute(sql)
+    mydb.commit()
+
+    if my_cursor.rowcount:
         return make_response(
             jsonify(mensagem="Carro atualizado com sucesso!",
-                    carro=carro_to_update),
-            200,
-        )
+                    carro=data), 200,
+                            )
     else:
         return make_response(jsonify(mensagem="Carro não encontrado!",
-                                     carro=None), 404)
+                                     carro=None), 404
+                             )
 
 
 app.run()
