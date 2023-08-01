@@ -8,7 +8,7 @@ python3 -m venv .venv && source .venv/bin/activate
 flask
 mysql-connector-python
 
-### Testando no Postman
+# Testando no Postman
 
 Here's how you can do it in Postman:
 
