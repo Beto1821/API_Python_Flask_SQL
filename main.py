@@ -37,11 +37,17 @@ def get_carros():
 @app.route("/carros", methods=["POST"])
 def create_carro():
     carro = request.json
-    Carros.append(carro)
+
+    my_cursor = mydb.cursor()
+    sql = f"""INSERT INTO Carros (marca, modelo, ano)
+         VALUES ('{carro['marca']}', '{carro['modelo']}', {carro['ano']})"""
+    my_cursor.execute(sql)
+    mydb.commit()
+
     return make_response(
         jsonify(mensagem="Carro cadastrado com sucesso!!!",
                 carro=carro,
-                Carros=Carros)
+        )
     )
 
 
