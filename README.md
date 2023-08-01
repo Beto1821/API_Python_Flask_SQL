@@ -6,6 +6,7 @@ python3 -m venv .venv && source .venv/bin/activate
 
 # PIP
 flask
+
 mysql-connector-python
 
 # Testando no Postman
