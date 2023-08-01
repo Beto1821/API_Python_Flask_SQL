@@ -53,22 +53,17 @@ def create_carro():
 
 @app.route("/carros/<int:id>", methods=["DELETE"])
 def delete_carro(id):
-    carro_to_delete = None
-    for carro in Carros:
-        if carro['id'] == id:
-            carro_to_delete = carro
-            break
+    my_cursor = mydb.cursor()
+    sql = f"DELETE FROM Carros WHERE id = {id}"
+    my_cursor.execute(sql)
+    mydb.commit()
 
-    if carro_to_delete:
-        Carros.remove(carro_to_delete)
-        return make_response(
-            jsonify(mensagem="Carro removido com sucesso!",
-                    carro=carro_to_delete),
-            200,
-        )
+    if my_cursor.rowcount:
+        return make_response(jsonify(mensagem="Carro removido com sucesso!"),
+                             200)
     else:
-        return make_response(jsonify(mensagem="Carro não encontrado!",
-                                     carro=None), 404)
+        return make_response(jsonify(mensagem="Carro não encontrado!"), 404)
+
 
 
 @app.route("/carros/<int:id>", methods=["PATCH"])
